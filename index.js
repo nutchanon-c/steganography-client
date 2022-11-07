@@ -65,6 +65,8 @@ const encryptKeyWithABE = () => {
   executeTerminalCommand(
     `cpabe-enc ${abePubKeyPath} ${sessionKeyFilePath} ${attr}`
   );
+
+  return sessionKeyFilePath + ".cpabe";
 };
 const decryptKeyWithABE = () => {
   let encryptedKeyPath = "./key.txt.cpabe";
@@ -161,7 +163,20 @@ switch (method) {
       // var textByLine = text.split("\n");
       console.log(text.length);
       loopFilesEncode(fileDir, key, text, encryptedDir);
-      encryptKeyWithABE();
+      let encryptedKeyPath = encryptKeyWithABE();
+
+      try {
+        const files = await fs.promises.readdir(encryptedDir);
+        // console.log(files);
+        for (const file of files) {
+          // console.log(path.join(fileDir, file));
+          uploadFileToCloud(file);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      uploadFileToCloud(encryptedKeyPath);
     } else {
       console.log("please try again");
     }
