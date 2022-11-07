@@ -9,5 +9,3 @@ node ./index.js enc plaintext_file_path images_directory
 ```
 node ./index.js dec directory
 ```
-
-test push
