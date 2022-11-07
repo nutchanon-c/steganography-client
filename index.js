@@ -1,10 +1,59 @@
+const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const sg = require("any-steganography");
 const steganographyClass = require("any-steganography");
-const key = "abcdefghabcdefghabcdefghabcdefgh";
+
 var args = process.argv.slice(2);
 console.log(args);
+
+function randomString(length) {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+// console.log(randomString(32));
+
+// exec("ls", (error, stdout, stderr) => {
+//   if (error) {
+//     console.log(`error: ${error.message}`);
+//     return;
+//   }
+//   if (stderr) {
+//     console.log(`stderr: ${stderr}`);
+//     return;
+//   }
+//   console.log(`stdout: ${stdout}`);
+// });
+
+const checkABEKey = () => {};
+
+const getKey = () => {
+  let keyFilePath = "./key.txt";
+  try {
+    if (fs.existsSync(keyFilePath)) {
+      let keyText = fs.readFileSync(keyFilePath).toString("utf-8");
+      console.log("Key file found and loaded");
+      return keyText;
+    } else {
+      console.log("Key file not found. Generating new key");
+      let keyGen = randomString(32);
+      fs.writeFileSync(keyFilePath, keyGen);
+      return keyGen;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const key = getKey();
+console.log(key);
 
 const loopFilesEncode = async (fileDir, key, text, outputDir) => {
   try {
