@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const sg = require("any-steganography");
 const steganographyClass = require("any-steganography");
+const key = "abcdefghabcdefghabcdefghabcdefgh";
 var args = process.argv.slice(2);
 console.log(args);
 
@@ -69,33 +70,36 @@ function stegaDecode(inputFile, key) {
   return message;
 }
 
-if (args.length === 3) {
-  var method = args[0];
-  var ptPath = args[1];
-  var imageDirectory = args[2];
-  const key = "abcdefghabcdefghabcdefghabcdefgh";
+var method = args[0];
 
-  const file = ptPath;
-  const fileDir = imageDirectory + "/images/";
-  const encryptedDir = imageDirectory + "/output/";
-
-  console.log(file);
-
-  var text = fs.readFileSync(file).toString("utf-8");
-  // var textByLine = text.split("\n");
-  console.log(text.length);
-
-  switch (method) {
-    case "enc":
+switch (method) {
+  case "enc":
+    if (args.length === 3) {
+      var ptPath = args[1];
+      var imageDirectory = args[2];
+      const file = ptPath;
+      const fileDir = imageDirectory + "/images/";
+      const encryptedDir = imageDirectory + "/output/";
+      console.log(file);
+      var text = fs.readFileSync(file).toString("utf-8");
+      // var textByLine = text.split("\n");
+      console.log(text.length);
       loopFilesEncode(fileDir, key, text, encryptedDir);
-      break;
-    case "dec":
-      loopFilesDecode(encryptedDir, key);
-      break;
-    default:
-      console.log("unknown operation");
-      break;
-  }
-} else {
-  console.log("please try again");
+    } else {
+      console.log("please try again");
+    }
+    break;
+  case "dec":
+    if (args.length === 2) {
+      var directory = args[1];
+      // var textByLine = text.split("\n");
+      // console.log(text.length);
+      loopFilesDecode(directory, key);
+    } else {
+      console.log("please try again");
+    }
+    break;
+  default:
+    console.log("unknown operation");
+    break;
 }
