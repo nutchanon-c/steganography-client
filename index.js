@@ -82,6 +82,7 @@ const decryptKeyWithABE = () => {
 
 const uploadFileToCloud = (path) => {
   // TODO: implement
+  console.log(path);
 };
 
 const loopFilesEncode = async (fileDir, key, text, outputDir) => {
@@ -166,12 +167,13 @@ switch (method) {
       let encryptedKeyPath = encryptKeyWithABE();
 
       try {
-        const files = await fs.promises.readdir(encryptedDir);
-        // console.log(files);
-        for (const file of files) {
-          // console.log(path.join(fileDir, file));
-          uploadFileToCloud(file);
-        }
+        fs.promises.readdir(encryptedDir).then((files) => {
+          // console.log(files);
+          for (const file of files) {
+            // console.log(path.join(fileDir, file));
+            uploadFileToCloud(file);
+          }
+        });
       } catch (e) {
         console.error(e);
       }
