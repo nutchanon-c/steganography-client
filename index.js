@@ -1,31 +1,23 @@
-var args = process.argv.slice(2);
-console.log(args);
 const fs = require("fs");
 const path = require("path");
 const sg = require("any-steganography");
-const file = path.join(__dirname, "test", "input.txt");
-const fileDir = path.join(__dirname, "test", "images");
-const encryptedDir = path.join(__dirname, "test", "output");
-const output = path.join(__dirname, "test-with-message.jpg");
 const steganographyClass = require("any-steganography");
-const key = "abcdefghabcdefghabcdefghabcdefgh";
-console.log(file);
+var args = process.argv.slice(2);
+console.log(args);
 
-var text = fs.readFileSync(file).toString("utf-8");
-// var textByLine = text.split("\n");
-console.log(text.length);
-
-const loopFilesEncode = async (dir) => {
+const loopFilesEncode = async (fileDir, key, text, outputDir) => {
   try {
-    const files = await fs.promises.readdir(dir);
+    const files = await fs.promises.readdir(fileDir);
     // console.log(files);
     var i = 0;
     var c = 1;
     for (const file of files) {
+      // console.log(path.join(fileDir, file));
       stegaEncode(
-        path.join(__dirname, "test", "images", file),
+        path.join(fileDir, file),
         text.slice(i, i + parseInt(text.length / 5, 10)),
-        path.join(__dirname, "test", "output", `${c}.jpg`)
+        path.join(outputDir, `${c}.jpg`),
+        key
       );
       i = i + parseInt(text.length / 5, 10);
       c++;
@@ -36,13 +28,23 @@ const loopFilesEncode = async (dir) => {
   }
 };
 
-const loopFilesDecode = async (dir) => {
+function stegaEncode(guestFile, message, outputFile, key) {
+  const buffer = sg.default.write(guestFile, message, key);
+  fs.writeFile(outputFile, buffer, (err) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+  });
+}
+
+const loopFilesDecode = async (dir, key) => {
   try {
     const files = await fs.promises.readdir(dir);
     // console.log(files);
     var res = "";
     for (const file of files) {
-      res = res + stegaDecode(path.join(encryptedDir, file));
+      res = res + stegaDecode(path.join(dir, file), key);
     }
     fs.writeFile(
       path.join(__dirname, "test", "output", "decoded.txt"),
@@ -59,17 +61,7 @@ const loopFilesDecode = async (dir) => {
   }
 };
 
-function stegaEncode(guestFile, message, outputFile) {
-  const buffer = sg.default.write(guestFile, message, key);
-  fs.writeFile(outputFile, buffer, (err) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-  });
-}
-
-function stegaDecode(inputFile) {
+function stegaDecode(inputFile, key) {
   const buffer = fs.readFileSync(inputFile);
   const message = steganographyClass.default.decode(buffer, "jpg", key);
   console.log(message);
@@ -77,14 +69,33 @@ function stegaDecode(inputFile) {
   return message;
 }
 
-switch (args[0]) {
-  case "enc":
-    loopFilesEncode(fileDir);
-    break;
-  case "dec":
-    loopFilesDecode(encryptedDir);
-    break;
-  default:
-    console.log("unknown operation");
-    break;
+if (args.length === 3) {
+  var method = args[0];
+  var ptPath = args[1];
+  var imageDirectory = args[2];
+  const key = "abcdefghabcdefghabcdefghabcdefgh";
+
+  const file = ptPath;
+  const fileDir = imageDirectory + "/images/";
+  const encryptedDir = imageDirectory + "/output/";
+
+  console.log(file);
+
+  var text = fs.readFileSync(file).toString("utf-8");
+  // var textByLine = text.split("\n");
+  console.log(text.length);
+
+  switch (method) {
+    case "enc":
+      loopFilesEncode(fileDir, key, text, encryptedDir);
+      break;
+    case "dec":
+      loopFilesDecode(encryptedDir, key);
+      break;
+    default:
+      console.log("unknown operation");
+      break;
+  }
+} else {
+  console.log("please try again");
 }
