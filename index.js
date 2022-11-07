@@ -20,17 +20,19 @@ function randomString(length) {
 
 // console.log(randomString(32));
 
-// exec("ls", (error, stdout, stderr) => {
-//   if (error) {
-//     console.log(`error: ${error.message}`);
-//     return;
-//   }
-//   if (stderr) {
-//     console.log(`stderr: ${stderr}`);
-//     return;
-//   }
-//   console.log(`stdout: ${stdout}`);
-// });
+const executeTerminalCommand = (command) => {
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.log(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
+};
 
 const checkABEKey = () => {};
 
@@ -54,6 +56,31 @@ const getKey = () => {
 
 const key = getKey();
 console.log(key);
+
+const encryptKeyWithABE = () => {
+  let sessionKeyFilePath = "./key.txt";
+  let abePubKeyPath = "../abe/pub_key";
+  let attr = "sysadmin";
+
+  executeTerminalCommand(
+    `cpabe-enc ${abePubKeyPath} ${sessionKeyFilePath} ${attr}`
+  );
+};
+const decryptKeyWithABE = () => {
+  let encryptedKeyPath = "./key.txt.cpabe";
+  let abePubKeyPath = "../abe/pub_key";
+  let abeKeyPath = "../abe/testkey";
+  executeTerminalCommand(
+    `cpabe-dec ${abePubKeyPath} ${abeKeyPath} ${encryptedKeyPath}`
+  );
+};
+
+// encryptKeyWithABE();
+// decryptKeyWithABE();
+
+const uploadFileToCloud = (path) => {
+  // TODO: implement
+};
 
 const loopFilesEncode = async (fileDir, key, text, outputDir) => {
   try {
@@ -134,6 +161,7 @@ switch (method) {
       // var textByLine = text.split("\n");
       console.log(text.length);
       loopFilesEncode(fileDir, key, text, encryptedDir);
+      encryptKeyWithABE();
     } else {
       console.log("please try again");
     }
