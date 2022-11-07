@@ -1,0 +1,11 @@
+{
+  "name": "sandbox-js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "any-steganography": "^1.1.3",
+    "crypto-js": "^4.1.1",
+    "steno": "^2.1.0"
+  }
+}
