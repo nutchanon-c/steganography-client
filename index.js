@@ -246,8 +246,6 @@ async function main() {
               payload = { ...tmp };
               console.log(payload);
 
-              // TODO: SEND API TO MASTER
-
               request.post(
                 `${process.env.API_URL}:3000/new`,
                 { json: payload },
@@ -255,6 +253,14 @@ async function main() {
                   if (!error && response.statusCode == 200) {
                     console.log(body);
                     console.log(`setid: ${body.setID}`);
+                    fs.appendFile(
+                      `./picture_sets/${body.setID}.json`,
+                      `{"file":"${file}", "ps_id":"${body.setID}"}`,
+                      function (err) {
+                        if (err) throw err;
+                        console.log("Saved!");
+                      }
+                    );
                   }
                 }
               );
