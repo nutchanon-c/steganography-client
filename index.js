@@ -108,7 +108,7 @@ const encryptKeyWithABE = () => {
   let attr = "sysadmin";
 
   executeTerminalCommand(
-    `cpabe-enc ${abePubKeyPath} ${sessionKeyFilePath} ${attr}`
+    `cpabe-enc ${abePubKeyPath} -k ${sessionKeyFilePath} ${attr}`
   );
 
   return sessionKeyFilePath + ".cpabe";
@@ -127,7 +127,9 @@ const decryptKeyWithABE = () => {
 
 const uploadFileToCloud = async (path) => {
   // console.log(path);
+
   let filename = path.replace(/^.*[\\\/]/, "");
+  console.log(`uploading: ${filename}`);
   let url = await uploadFile(path, filename);
   // console.log(path);
   return url;
@@ -217,6 +219,8 @@ async function main() {
         loopFilesEncode(fileDir, key, text, encryptedDir);
         let encryptedKeyPath = encryptKeyWithABE();
 
+        let allFilePath = [];
+
         let payload = {
           uuid: uuid,
           files: [],
@@ -227,13 +231,15 @@ async function main() {
           fs.promises.readdir(encryptedDir).then((files) => {
             // console.log(files);
             for (const file of files) {
+              console.log(`file: ${file}`);
               // console.log(path.join(fileDir, file));
               uploadFileToCloud(`${encryptedDir}/${file}`).then((url) => {
-                let tmp = { ...payload };
-                tmp.files = [...tmp.files, url];
-                payload = { ...tmp };
+                allFilePath.push(url);
               });
             }
+
+            payload.files = allFilePath;
+
             uploadFileToCloud(encryptedKeyPath).then((url) => {
               let tmp = { ...payload };
               tmp.keyPath = url;
