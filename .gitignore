@@ -1,5 +1,7 @@
 # Custom files
 key.txt
+uuid.txt
+*.cpabe
 
 # Logs
 logs
