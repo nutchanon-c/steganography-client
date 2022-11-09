@@ -108,8 +108,12 @@ const encryptKeyWithABE = () => {
   let attr = "sysadmin";
 
   executeTerminalCommand(
-    `cpabe-enc ${abePubKeyPath} -k ${sessionKeyFilePath} ${attr}`
+    `cpabe-enc ${abePubKeyPath} ${sessionKeyFilePath} ${attr}`
   );
+
+  // executeTerminalCommand(
+  //   `cpabe-enc ${abePubKeyPath} -k ${sessionKeyFilePath} ${attr}`
+  // );
 
   return sessionKeyFilePath + ".cpabe";
 };
