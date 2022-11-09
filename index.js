@@ -6,6 +6,7 @@ const path = require("path");
 const sg = require("any-steganography");
 const steganographyClass = require("any-steganography");
 const AWS = require("aws-sdk");
+var request = require("request");
 
 const getKey = () => {
   let keyFilePath = "./key.txt";
@@ -128,7 +129,7 @@ const uploadFileToCloud = async (path) => {
   // console.log(path);
   let filename = path.replace(/^.*[\\\/]/, "");
   let url = await uploadFile(path, filename);
-  console.log(path);
+  // console.log(path);
   return url;
 
   // TODO: implement
@@ -231,17 +232,27 @@ async function main() {
                 let tmp = { ...payload };
                 tmp.files = [...tmp.files, url];
                 payload = { ...tmp };
-
-                uploadFileToCloud(encryptedKeyPath).then((url) => {
-                  let tmp = { ...payload };
-                  tmp.keyPath = url;
-                  payload = { ...tmp };
-                  console.log(payload);
-
-                  // TODO: SEND API TO MASTER
-                });
               });
             }
+            uploadFileToCloud(encryptedKeyPath).then((url) => {
+              let tmp = { ...payload };
+              tmp.keyPath = url;
+              payload = { ...tmp };
+              console.log(payload);
+
+              // TODO: SEND API TO MASTER
+
+              request.post(
+                `${process.env.API_URL}:3000/new`,
+                { json: payload },
+                function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                    console.log(body);
+                    console.log(`setid: ${body.setID}`);
+                  }
+                }
+              );
+            });
           });
         } catch (e) {
           console.error(e);
