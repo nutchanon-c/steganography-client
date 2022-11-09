@@ -220,7 +220,7 @@ async function main() {
         var text = fs.readFileSync(file).toString("utf-8");
         // var textByLine = text.split("\n");
         console.log(text.length);
-        loopFilesEncode(fileDir, key, text, encryptedDir);
+        await loopFilesEncode(fileDir, key, text, encryptedDir);
         let encryptedKeyPath = encryptKeyWithABE();
 
         let allFilePath = [];
@@ -232,19 +232,19 @@ async function main() {
         };
 
         try {
-          fs.promises.readdir(encryptedDir).then((files) => {
+          fs.promises.readdir(encryptedDir).then(async (files) => {
             // console.log(files);
             for (const file of files) {
               console.log(`file: ${file}`);
               // console.log(path.join(fileDir, file));
-              uploadFileToCloud(`${encryptedDir}/${file}`).then((url) => {
+              await uploadFileToCloud(`${encryptedDir}/${file}`).then((url) => {
                 allFilePath.push(url);
               });
             }
 
             payload.files = allFilePath;
 
-            uploadFileToCloud(encryptedKeyPath).then((url) => {
+            await uploadFileToCloud(encryptedKeyPath).then((url) => {
               let tmp = { ...payload };
               tmp.keyPath = url;
               payload = { ...tmp };
@@ -265,6 +265,8 @@ async function main() {
                         console.log("Saved!");
                       }
                     );
+                  } else {
+                    console.log("api error");
                   }
                 }
               );
