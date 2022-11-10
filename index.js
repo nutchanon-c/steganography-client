@@ -229,6 +229,7 @@ async function main() {
           uuid: uuid,
           files: [],
           keyPath: "",
+          user_attributes: [],
         };
 
         try {
@@ -251,7 +252,7 @@ async function main() {
               tmp.keyPath = url;
               payload = { ...tmp };
               console.log(payload);
-
+              payload.user_attributes = ["attr1", "attr2", "attr3"];
               request.post(
                 `${process.env.API_URL}:3000/new`,
                 { json: payload },
