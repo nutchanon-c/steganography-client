@@ -234,12 +234,14 @@ async function main() {
         try {
           fs.promises.readdir(encryptedDir).then(async (files) => {
             // console.log(files);
+            let i = 1;
             for (const file of files) {
               console.log(`file: ${file}`);
               // console.log(path.join(fileDir, file));
               await uploadFileToCloud(`${encryptedDir}/${file}`).then((url) => {
-                allFilePath.push(url);
+                allFilePath.push({ sequence: i, url: url });
               });
+              i++;
             }
 
             payload.files = allFilePath;
