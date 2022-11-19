@@ -4,6 +4,7 @@ uuid.txt
 *.cpabe
 picture_sets
 test
+*.key.txt
 
 # Logs
 logs
