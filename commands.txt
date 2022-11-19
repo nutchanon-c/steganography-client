@@ -1,0 +1,6 @@
+cpabe-keygen -o attr1-key  ../abe/pub_key ../abe/master_key \ admin
+
+
+cpabe-enc ../abe/pub_key ./key.txt admin
+
+cpabe-dec ../abe/pub_key ./admin-key ./key.txt.cpabe
