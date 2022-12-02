@@ -1,4 +1,5 @@
-# Steaganography
+# OLD REPOSITORY. MOVED TO PYTHON CLIENT INSTEAD. SEE [THIS REPO](https://github.com/nutchanon-c/steganography-client-python)
+# Steganography
 
 ## To Encode:
 ```
